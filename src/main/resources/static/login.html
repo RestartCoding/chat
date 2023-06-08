@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="js/jquery-3.7.0.min.js"></script>
+    <script src="js/axios.min.js"></script>
+</head>
+
+<style>
+    #loginDiv {
+        margin-left: 30%;
+        margin-right: 30%;
+    }
+</style>
+
+<body>
+<div id="loginDiv">
+    <h1>login</h1>
+    <div>username:<input id="username" placeholder="input username"></div>
+    <div>password:<input id="password" type="password" placeholder="input password"></div>
+    <div>
+        <button onclick="login()">submit</button>
+    </div>
+</div>
+
+<script>
+    function login() {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        let data = {
+            username: username,
+            password: password
+        };
+        axios({
+            method: 'post',
+            url: '/user/login',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data)
+        }).then(function (resp) {
+            console.log('success');
+            location.href = '/index.html';
+        }).catch(function (err) {
+
+        });
+    }
+</script>
+</body>
+</html>

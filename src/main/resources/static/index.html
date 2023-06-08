@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script src="js/jquery-3.7.0.min.js"></script>
+    <script src="js/axios.min.js"></script>
+</head>
+
+<style>
+
+    html, body {
+        height: 100%;
+    }
+
+    #left {
+        height: 60%;
+        width: 50%;
+    }
+
+    #chat-room {
+        height: 100%;
+        width: 100%;
+        border: 1px solid;
+    }
+
+    #logout {
+        width: 100px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+</style>
+
+<body>
+<div id="left">
+    <div id="chat-room">
+
+    </div>
+    <div>
+        <textarea id="message"></textarea>
+        <button onclick="sendMessage()">send</button>
+    </div>
+</div>
+<div style="float: right">
+    <button id="logout" onclick="logout()">logout</button>
+</div>
+</body>
+<script>
+    let ws = new WebSocket("ws://localhost:8080/chat");
+    ws.onopen = function () {
+        console.log('ws opened')
+    };
+    ws.onclose = function () {
+        console.log('ws closed')
+    }
+    ws.onerror = function () {
+        console.log('ws error');
+        ws.close();
+    }
+    ws.onmessage = function (msg) {
+        let data = JSON.parse(msg.data);
+        $('#chat-room').append('<div>' + data.sender + ':' + data.payload + '</div><div>' + new Date(data.time) + '</div>');
+    }
+
+    function sendMessage() {
+        ws.send($('#message').val());
+    }
+
+    function logout() {
+        axios({
+            method: 'post',
+            url: '/user/logout',
+        }).then(function (resp) {
+            location.href = '/login.html';
+        }).catch(function (err) {
+            alert('logout error')
+        });
+    }
+</script>
+</html>
